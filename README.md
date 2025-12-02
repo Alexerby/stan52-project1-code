@@ -1,108 +1,83 @@
-## Overview
+# MNIST Classification Project
 
-This project trains a few machine-learning models on the MNIST dataset and then tests them on some hand-drawn PNG digit images.
-Models are trained using scikit-learn and XGBoost and saved as `.joblib` files so they can be loaded later for inference.
-
-Workflow:
-
-1. Load MNIST from IDX files
-2. Train a chosen model
-3. Save it in `models/`
-4. Test it on PNG images in `our-test-images/`
-
----
+This project implements and compares various machine learning models on the MNIST dataset. It includes pipelines for training, evaluation, and inference on custom handwritten digits.
 
 ## Project Structure
 
-```
-project/
-│
-├── data/
-│   └── MNIST/                 # Raw IDX files
-│
-├── models/                    # Saved trained models
-│
-├── our-test-images/           # Custom PNG digits
-│
-└── src/
-    ├── utils/                 # paths.py (centralized paths)
-    ├── preprocessing/         # MNIST IDX loading helpers
-    ├── training/              # training script + model registry
-    ├── inference/             # test_images.py for predictions
-    ├── visualizations.py
-    ├── metrics.py
-    └── __init__.py
-```
+```text
+.
+├── data/                   # MNIST dataset (ubyte files)
+├── models/                 # Serialized trained models (.joblib)
+├── our-test-images/        # Custom PNG images for inference testing
+├── src/                    # Source code package
+│   ├── inference/          # Scripts for running predictions on new data
+│   ├── training/           # Model registry and training logic
+│   ├── utils/              # Specific utilities (paths, data loading)
+│   ├── metrics.py          # Evaluation metric functions
+│   ├── test.py             # Script for testing models on custom PNG images
+│   ├── train_mnist.py      # Main entry point for training
+│   └── visualizations.py   # Plotting and visual analysis
+└── requirements.txt        # Python dependencies
+````
 
----
+## Setup & Installation
 
-## Requirements
+1.  **Clone the repository** (if applicable).
+2.  **Install dependencies**:
+    Ensure you are using Python 3.10+.
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-Install dependencies with:
+## Usage
 
-```
-pip install -r requirements.txt
-```
+**Note:** All commands should be run from the project root directory using the `-m` flag to ensure Python handles relative imports within the `src` package correctly.
 
-Uses:
+### 1\. Training Models
 
-* Python 3.10+
-* numpy
-* scikit-learn
-* pillow
-* xgboost
-* joblib
+The training script requires you to specify which model you want to train.
 
----
+**List available models:**
 
-## Training a Model
-
-Training is done through the CLI in `src/training/train_mnist.py`.
-
-List available models:
-
-```
-python3 -m src.training.train_mnist --list-models
+```bash
+python -m src.train_mnist --list-models
 ```
 
-Train one model:
+**Train a specific model:**
+This command trains the model on MNIST data, prints the accuracy/confusion matrix, and saves the serialized model to the `models/` directory.
 
-```
-python3 -m src.training.train_mnist --model <model_name>
-```
-
-Example:
-
-```
-python3 -m src.training.train_mnist --model linear_svm
+```bash
+python -m src.train_mnist --model linear_svm
+# or
+python -m src.train_mnist --model xgboost
 ```
 
-This loads MNIST, trains the model, prints accuracy, and saves:
+### 2\. Inference on Custom Images
 
-```
-models/<model_name>.joblib
-```
+To test a trained model on the custom handwritten PNG digits located in `our-test-images/`, use the `src.test` module. You must provide the name of the model you wish to use (which must exist in `models/`).
 
----
-
-## Testing on PNG Images
-
-Put your PNGs in:
-
-```
-our-test-images/
+```bash
+# Syntax: python -m src.test <model_name>
+python -m src.test linear_svm
 ```
 
-Run:
+### 3\. Visualizations
 
-```
-python3 -m src.inference.test_images <model_name>
-```
+To run dimensionality reduction (PCA, t-SNE) and view random examples from the dataset:
 
-Example:
-
-```
-python3 -m src.inference.test_images linear_svm
+```bash
+python -m src.visualizations
 ```
 
-The script loads the model, preprocesses each PNG into MNIST format, and prints predictions.
+## Data & Paths
+
+  * **Dataset:** The project expects standard MNIST binary files (`.idx3-ubyte`) in `data/MNIST/`.
+  * **Custom Images:** PNG images for inference should be placed in `our-test-images/`. They will be automatically resized to 28x28 and converted to grayscale.
+  * **Path Management:** Absolute paths are handled dynamically via `src/utils/paths.py`.
+
+## Results and Metrics
+
+  * **Training Output:** Accuracy and Confusion Matrices are printed to the console immediately after training.
+  * **Metric Analysis:** The `src.metrics` module contains helper functions like `summarize_confusions` to analyze specific error patterns (e.g., 4 vs 9), which are utilized during the training evaluation pipeline.
+
+

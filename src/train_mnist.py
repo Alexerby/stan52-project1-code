@@ -13,14 +13,15 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score, confusion_matrix
 
-from utils.paths import DATA_DIR, MODEL_DIR
-from training.registry import MODEL_REGISTRY
+from .utils.paths import DATA_DIR, MODEL_DIR
+from .training.registry import MODEL_REGISTRY
 from src.utils.data_loading import load_mnist
 
 # ---------------------------------------------------------------------------
 
+# Private
 
-def make_pipeline(spec: dict) -> Pipeline:
+def _make_pipeline(spec: dict) -> Pipeline:
     """
     Build a Pipeline from a model specification.
     """
@@ -33,6 +34,8 @@ def make_pipeline(spec: dict) -> Pipeline:
 
 # ---------------------------------------------------------------------------
 
+# Public 
+
 def train_and_evaluate(model_name: str, spec: dict,
                        X_train, y_train, X_test, y_test):
     """
@@ -40,7 +43,7 @@ def train_and_evaluate(model_name: str, spec: dict,
     """
     print(f"Training model: {model_name}")
 
-    pipeline = make_pipeline(spec)
+    pipeline = _make_pipeline(spec)
     pipeline.fit(X_train, y_train)
 
     y_pred = pipeline.predict(X_test)
