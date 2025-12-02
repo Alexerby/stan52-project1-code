@@ -111,4 +111,3 @@ python3 -m src.inference.test_images linear_svm
 ```
 
 The script loads the model, preprocesses each PNG into MNIST format, and prints predictions.
->>>>>>> fb7635263de5caa7df86942047429e4e1ed6fff5
