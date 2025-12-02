@@ -62,19 +62,19 @@ Training is done through the CLI in `src/training/train_mnist.py`.
 List available models:
 
 ```
-python3 -m src.training.train_mnist --list-models
+python3 -m src.train_mnist --list-models
 ```
 
 Train one model:
 
 ```
-python3 -m src.training.train_mnist --model <model_name>
+python3 -m src.train_mnist --model <model_name>
 ```
 
 Example:
 
 ```
-python3 -m src.training.train_mnist --model linear_svm
+python3 -m src.train_mnist --model linear_svm
 ```
 
 This loads MNIST, trains the model, prints accuracy, and saves:
@@ -83,8 +83,13 @@ This loads MNIST, trains the model, prints accuracy, and saves:
 models/<model_name>.joblib
 ```
 
----
+## Evaluate a model
+```bash 
+python3 -m src.evaluate --model <model>
+```
 
+---
+python -m src.evaluate --model linear_svm
 ## Testing on PNG Images
 
 Put your PNGs in:

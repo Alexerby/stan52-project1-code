@@ -13,8 +13,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score, confusion_matrix
 
-from utils.paths import DATA_DIR, MODEL_DIR
-from training.registry import MODEL_REGISTRY
+from .utils.paths import DATA_DIR, MODEL_DIR
+from .training.registry import MODEL_REGISTRY
 from src.utils.data_loading import load_mnist
 
 # ---------------------------------------------------------------------------
