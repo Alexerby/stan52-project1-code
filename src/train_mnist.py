@@ -33,6 +33,8 @@ def make_pipeline(spec: dict) -> Pipeline:
 
 # ---------------------------------------------------------------------------
 
+# Public 
+
 def train_and_evaluate(model_name: str, spec: dict,
                        X_train, y_train, X_test, y_test):
     """
