@@ -8,10 +8,21 @@ Usage:
 
 import argparse
 import joblib
+<<<<<<< HEAD
+=======
+import numpy as np
+>>>>>>> fb7635263de5caa7df86942047429e4e1ed6fff5
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score, confusion_matrix
+<<<<<<< HEAD
+=======
+
+from utils.paths import DATA_DIR, MODEL_DIR
+from preprocessing.mnist_io import load_idx_images, load_idx_labels
+from training.registry import MODEL_REGISTRY
+>>>>>>> fb7635263de5caa7df86942047429e4e1ed6fff5
 
 from .utils.paths import DATA_DIR, MODEL_DIR
 from .training.registry import MODEL_REGISTRY
@@ -19,9 +30,24 @@ from src.utils.data_loading import load_mnist
 
 # ---------------------------------------------------------------------------
 
+<<<<<<< HEAD
 # Private
 
 def _make_pipeline(spec: dict) -> Pipeline:
+=======
+def load_mnist(data_dir: Path):
+    """
+    Load MNIST from IDX files.
+    """
+    X_train = load_idx_images(data_dir / "train-images.idx3-ubyte")
+    y_train = load_idx_labels(data_dir / "train-labels.idx1-ubyte")
+    X_test  = load_idx_images(data_dir / "t10k-images.idx3-ubyte")
+    y_test  = load_idx_labels(data_dir / "t10k-labels.idx1-ubyte")
+    return X_train, y_train, X_test, y_test
+
+
+def make_pipeline(spec: dict) -> Pipeline:
+>>>>>>> fb7635263de5caa7df86942047429e4e1ed6fff5
     """
     Build a Pipeline from a model specification.
     """
@@ -43,7 +69,11 @@ def train_and_evaluate(model_name: str, spec: dict,
     """
     print(f"Training model: {model_name}")
 
+<<<<<<< HEAD
     pipeline = _make_pipeline(spec)
+=======
+    pipeline = make_pipeline(spec)
+>>>>>>> fb7635263de5caa7df86942047429e4e1ed6fff5
     pipeline.fit(X_train, y_train)
 
     y_pred = pipeline.predict(X_test)
