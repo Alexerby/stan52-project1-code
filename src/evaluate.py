@@ -46,9 +46,6 @@ def evaluate_model(model_name: str):
     print(f"Test Set Accuracy: {acc:.4f}")
     print("-" * 40)
     
-    # # Use the helper function from metrics.py for detailed error analysis
-    # summarize_confusions(cm)
-
 def main():
     parser = argparse.ArgumentParser(description="Evaluate a saved MNIST model.")
     parser.add_argument(

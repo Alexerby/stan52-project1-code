@@ -1,70 +1,81 @@
-## MNIST Classification Project
+# MNIST Classification Project
 
-This project trains and evaluates machine learning models (including tuned SVMs) on the standard MNIST dataset and custom hand-drawn images.
-
------
-
-## Project Structure
+## 📂 Project Structure
 
 | Directory | Purpose |
 | :--- | :--- |
 | `data/` | Contains the raw MNIST dataset files. |
-| `models/` | Stores trained models as `.joblib` files. |
+| `models/` | Stores trained models (e.g., `svm_rbf.joblib`). |
 | `our-test-images/` | **Place your custom PNG digit images here for testing.** |
-| `src/` | All Python source code (training, inference, utilities). |
+| `src/` | Source code (`train.py`, `evaluate.py`, `test_custom_images.py`, etc.). |
 
------
+---
 
-## Setup
+## ⚙️ Setup
 
 Install required dependencies:
 
 ```bash
 pip install -r requirements.txt
-```
+````
 
 -----
 
-## Workflow & Usage
+## 🚀 Usage Workflow
 
-The main scripts are executable via the command line.
+### Training (`src.train`)
 
-### 1\. Training a Model
+Training is handled by `src.train`. The available model list is defined in `src/registry.py`.
 
-Training is handled by `src.train`. The available model list is defined in the `src/training/registry.py` file.
-
-| Action | Command |
-| :--- | :--- |
-| **List Models** | `python3 -m src.train --list-models` |
-| **Train Standard** | `python3 -m src.train --model <model_name>` |
-| **Tune & Train** | `python3 -m src.train --model <model_name> --tune` |
-
-#### Tuning (`--tune`)
-
-The `--tune` flag executes a **Grid Search Cross-Validation** (CV) to find optimal hyperparameters (e.g., $C$ and $\gamma$ for SVM) on the training set.
-
-
-#### Testing (`--test`)
-This will only train the model on 1,000 observations. Used for testing.
-
-### 2\. Evaluating a Model
-
-Evaluate a previously trained model against the official MNIST test set (to get the confusion matrix and final accuracy):
+**Common Commands:**
 
 ```bash
-python3 -m src.evaluate --model <model_name>
+# List all available models
+python3 -m src.train --list-models
+
+# Train a specific model (e.g., SVM)
+python3 -m src.train --model svm_rbf
+
+# Train with Hyperparameter Tuning (Grid Search)
+python3 -m src.train --model svm_rbf --tune
 ```
 
-### 3\. Testing on Custom Images
+**Configuration Flags:**
+
+| Flag | Description |
+| :--- | :--- |
+| `--model <name>` | **Target Model:** Specifies the model architecture to train (e.g., `svm_rbf`). |
+| `--list-models` | **Info:** Lists all available model names in the registry and exits. |
+| `--tune` | **Optimization:** Executes **Grid Search Cross-Validation** to find optimal hyperparameters (e.g., $C$ and $\gamma$) before final training. |
+| `--test` | **Debug Mode:** Trains on a subset of **1,000 observations** only. Use this to verify the pipeline works without waiting for full training. |
+
+###  Evaluation (`src.evaluate`)
+
+Evaluate a previously trained model against the official MNIST test set to generate a confusion matrix and accuracy score:
+
+```bash
+python3 -m src.evaluate --model svm_rbf
+```
+
+###  Inference (`src.test_custom_images`)
 
 To see how a model performs on your own handwritten digits:
 
 1.  Place your PNG images (e.g., `my_digit_4.png`) inside the `our-test-images/` directory.
-2.  Run the inference script:
+2.  Run the custom image test script.
 
-<!-- end list -->
+**Basic Usage:**
 
 ```bash
-python3 -m src.inference.test_images <model_name>
+python3 -m src.test_custom_images svm_rbf
 ```
 
+**Arguments:**
+
+| Argument | Type | Description |
+| :--- | :--- | :--- |
+| `model` | **Positional** | The name of the saved model (without `.joblib` extension). |
+| `--dir` | **Optional** | Directory containing PNG images. Defaults to `our-test-images/`. |
+
+```
+```
