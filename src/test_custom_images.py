@@ -16,9 +16,16 @@ from src.utils.paths import MODEL_DIR, TEST_IMAGE_DIR
 
 # ---------------------------------------------------------------------------
 
-def load_and_preprocess_image(path: Path) -> np.ndarray:
+def load_and_preprocess_image(path: Path, invert_colors: bool = False) -> np.ndarray:
     """
     Load a PNG image and preprocess it into the MNIST 28x28 format.
+
+    Parameters
+    -------
+    path (path): path to the image
+    invert_colors (bool): 
+        whether to invert the colour of 
+        the image (white foreground on black background)
 
     Returns
     -------
@@ -32,8 +39,8 @@ def load_and_preprocess_image(path: Path) -> np.ndarray:
 
     arr = np.array(img).astype(np.float32)
 
-    # Optional: invert colors (uncomment if your custom images are black-on-white)
-    # arr = 255 - arr
+    if invert_colors:
+        arr = 255 - arr
 
     arr = arr.reshape(-1)  # flatten
     return arr

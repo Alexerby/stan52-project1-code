@@ -28,10 +28,7 @@ def scatter_tsne_2d(X, y, n_samples=1000, perplexity=30):
         cmap="tab10"
     )
 
-    # unique digits actually present in the sampled subset
     digits_present = np.unique(y_sub)
-
-    # create legend handles only for digits present
     handles = [
         plt.Line2D(
             [], [], marker="o", color=plt.cm.tab10(d / 10), linestyle="", markersize=6

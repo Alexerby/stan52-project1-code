@@ -81,8 +81,9 @@ def train_and_evaluate(model_name: str, spec: dict,
 
 
 def parse_args():
-    """All the args."""
+    """All the args to be parsed."""
     parser = argparse.ArgumentParser(description="Train a MNIST model.")
+
     parser.add_argument(
             "--model",
             type=str,
@@ -106,7 +107,6 @@ def parse_args():
         action="store_true",
         help="To test model on a subset of 1 000 observations."
     )
-
 
     return parser.parse_args()
 
