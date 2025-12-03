@@ -31,18 +31,21 @@ The main scripts are executable via the command line.
 
 ### 1\. Training a Model
 
-Training is handled by `src.train_mnist`. The available model list is defined in the `src/training/registry.py` file.
+Training is handled by `src.train`. The available model list is defined in the `src/training/registry.py` file.
 
 | Action | Command |
 | :--- | :--- |
-| **List Models** | `python3 -m src.train_mnist --list-models` |
-| **Train Standard** | `python3 -m src.train_mnist --model <model_name>` |
-| **Tune & Train** | `python3 -m src.train_mnist --model <model_name> --tune` |
+| **List Models** | `python3 -m src.train --list-models` |
+| **Train Standard** | `python3 -m src.train --model <model_name>` |
+| **Tune & Train** | `python3 -m src.train --model <model_name> --tune` |
 
 #### Tuning (`--tune`)
 
 The `--tune` flag executes a **Grid Search Cross-Validation** (CV) to find optimal hyperparameters (e.g., $C$ and $\gamma$ for SVM) on the training set.
 
+
+#### Testing (`--test`)
+This will only train the model on 1,000 observations. Used for testing.
 
 ### 2\. Evaluating a Model
 

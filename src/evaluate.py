@@ -23,7 +23,7 @@ def load_saved_model(model_name: str):
     
     if not model_path.exists():
         print(f"Error: Model file not found at {model_path}")
-        print(f"Have you trained it yet? Run: python -m src.train_mnist --model {model_name}")
+        print(f"Have you trained it yet? Run: python -m src.train --model {model_name}")
         sys.exit(1)
         
     print(f"Loading model: {model_path}")

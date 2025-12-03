@@ -1,11 +1,10 @@
 import argparse
 import joblib
-import sys
 
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.metrics import accuracy_score, confusion_matrix
 
 from src.utils.utils import time_execution
 
@@ -85,9 +84,9 @@ def parse_args():
     """All the args."""
     parser = argparse.ArgumentParser(description="Train a MNIST model.")
     parser.add_argument(
-        "--model",
-        type=str,
-        help="Name of model to train (see --list-models)."
+            "--model",
+            type=str,
+            help="Name of model to train (see --list-models)."
     )
 
     parser.add_argument(
@@ -95,12 +94,20 @@ def parse_args():
         action="store_true",
         help="List available models and exit."
     )
-    
+
     parser.add_argument(
         "--tune",
         action="store_true",
         help="Perform hyperparameter tuning (GridSearch) before final evaluation."
     )
+
+    parser.add_argument(
+        "--test",
+        action="store_true",
+        help="To test model on a subset of 1 000 observations."
+    )
+
+
     return parser.parse_args()
 
 @time_execution
@@ -125,6 +132,15 @@ def main():
     print(f"Loading MNIST from {DATA_DIR}...")
     X_train, y_train, X_test, y_test = load_mnist(DATA_DIR)
     
+    if args.test:
+        test_no = 1_000
+        X_train, y_train, X_test, y_test = (
+            X_train[:test_no],
+            y_train[:test_no],
+            X_test[:test_no],
+            y_test[:test_no]
+        )
+
     print("Training set:", X_train.shape)
     print("Test set:", X_test.shape)
 
