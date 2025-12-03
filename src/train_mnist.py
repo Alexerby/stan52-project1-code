@@ -125,9 +125,6 @@ def main():
     print(f"Loading MNIST from {DATA_DIR}...")
     X_train, y_train, X_test, y_test = load_mnist(DATA_DIR)
     
-    # UNCOMMENT to test the code on a smaller sample
-    # X_train, y_train = X_train[:10000], y_train[:10000]
-
     print("Training set:", X_train.shape)
     print("Test set:", X_test.shape)
 
