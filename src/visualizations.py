@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from .train_mnist import load_mnist
+from .train import load_mnist
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
