@@ -44,6 +44,9 @@ Training is handled by `src.train_mnist`. The available model list is defined in
 The `--tune` flag executes a **Grid Search Cross-Validation** (CV) to find optimal hyperparameters (e.g., $C$ and $\gamma$ for SVM) on the training set.
 
 
+#### Testing (`--test`)
+This will only train the model on 1,000 observations. Used for testing.
+
 ### 2\. Evaluating a Model
 
 Evaluate a previously trained model against the official MNIST test set (to get the confusion matrix and final accuracy):
