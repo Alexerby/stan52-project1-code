@@ -1,113 +1,67 @@
-## Overview
+## MNIST Classification Project
 
-This project trains a few machine-learning models on the MNIST dataset and then tests them on some hand-drawn PNG digit images.
-Models are trained using scikit-learn and XGBoost and saved as `.joblib` files so they can be loaded later for inference.
+This project trains and evaluates machine learning models (including tuned SVMs) on the standard MNIST dataset and custom hand-drawn images.
 
-Workflow:
-
-1. Load MNIST from IDX files
-2. Train a chosen model
-3. Save it in `models/`
-4. Test it on PNG images in `our-test-images/`
-
----
+-----
 
 ## Project Structure
 
-```
-project/
-│
-├── data/
-│   └── MNIST/                 # Raw IDX files
-│
-├── models/                    # Saved trained models
-│
-├── our-test-images/           # Custom PNG digits
-│
-└── src/
-    ├── utils/                 # paths.py (centralized paths)
-    ├── preprocessing/         # MNIST IDX loading helpers
-    ├── training/              # training script + model registry
-    ├── inference/             # test_images.py for predictions
-    ├── visualizations.py
-    ├── metrics.py
-    └── __init__.py
-```
+| Directory | Purpose |
+| :--- | :--- |
+| `data/` | Contains the raw MNIST dataset files. |
+| `models/` | Stores trained models as `.joblib` files. |
+| `our-test-images/` | **Place your custom PNG digit images here for testing.** |
+| `src/` | All Python source code (training, inference, utilities). |
 
----
+-----
 
-## Requirements
+## Setup
 
-Install dependencies with:
+Install required dependencies:
 
-```
+```bash
 pip install -r requirements.txt
 ```
 
-Uses:
+-----
 
-* Python 3.10+
-* numpy
-* scikit-learn
-* pillow
-* xgboost
-* joblib
+## Workflow & Usage
 
----
+The main scripts are executable via the command line.
 
-## Training a Model
+### 1\. Training a Model
 
-Training is done through the CLI in `src/training/train_mnist.py`.
+Training is handled by `src.train_mnist`. The available model list is defined in the `src/training/registry.py` file.
 
-List available models:
+| Action | Command |
+| :--- | :--- |
+| **List Models** | `python3 -m src.train_mnist --list-models` |
+| **Train Standard** | `python3 -m src.train_mnist --model <model_name>` |
+| **Tune & Train** | `python3 -m src.train_mnist --model <model_name> --tune` |
 
-```
-python3 -m src.train_mnist --list-models
-```
+#### Tuning (`--tune`)
 
-Train one model:
+The `--tune` flag executes a **Grid Search Cross-Validation** (CV) to find optimal hyperparameters (e.g., $C$ and $\gamma$ for SVM) on the training set.
 
-```
-python3 -m src.train_mnist --model <model_name>
-```
 
-Example:
+### 2\. Evaluating a Model
 
-```
-python3 -m src.train_mnist --model linear_svm
+Evaluate a previously trained model against the official MNIST test set (to get the confusion matrix and final accuracy):
+
+```bash
+python3 -m src.evaluate --model <model_name>
 ```
 
-This loads MNIST, trains the model, prints accuracy, and saves:
+### 3\. Testing on Custom Images
 
-```
-models/<model_name>.joblib
-```
+To see how a model performs on your own handwritten digits:
 
-## Evaluate a model
-```bash 
-python3 -m src.evaluate --model <model>
-```
+1.  Place your PNG images (e.g., `my_digit_4.png`) inside the `our-test-images/` directory.
+2.  Run the inference script:
 
----
-python -m src.evaluate --model linear_svm
-## Testing on PNG Images
+<!-- end list -->
 
-Put your PNGs in:
-
-```
-our-test-images/
-```
-
-Run:
-
-```
+```bash
 python3 -m src.inference.test_images <model_name>
 ```
 
-Example:
-
-```
-python3 -m src.inference.test_images linear_svm
-```
-
-The script loads the model, preprocesses each PNG into MNIST format, and prints predictions.
