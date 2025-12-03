@@ -1,7 +1,5 @@
 
 from sklearn.svm import SVC, LinearSVC
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from xgboost import XGBClassifier
 
 MODEL_REGISTRY = {
     "linear_svm": {
