@@ -35,11 +35,9 @@ def evaluate_model(model_name: str):
     print(f"Loading MNIST data from {DATA_DIR}...")
     _, _, X_test, y_test = load_mnist(DATA_DIR)
     
-    # 3. Inference
     print(f"Running inference on {len(X_test)} test samples...")
     y_pred = pipeline.predict(X_test)
 
-    # 4. Metrics
     acc = accuracy_score(y_test, y_pred)
     cm = confusion_matrix(y_test, y_pred)
 
