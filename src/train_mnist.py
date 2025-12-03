@@ -38,7 +38,7 @@ def run_hyperparameter_tuning(model_name: str, spec: dict, X_train, y_train):
     grid_search = GridSearchCV(
         pipeline, 
         spec['param_grid'], 
-        cv=3, 
+        cv=5, 
         scoring='accuracy', 
         n_jobs=-1, 
         verbose=3
