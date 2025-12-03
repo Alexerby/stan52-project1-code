@@ -10,7 +10,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix, classification_rep
 from src.utils.utils import time_execution
 
 from .utils.paths import DATA_DIR, MODEL_DIR
-from .training.registry import MODEL_REGISTRY
+from .registry import MODEL_REGISTRY
 from src.utils.data_loading import load_mnist
 
 
