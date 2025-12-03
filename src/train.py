@@ -1,11 +1,10 @@
 import argparse
 import joblib
-import sys
 
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.metrics import accuracy_score, confusion_matrix
 
 from src.utils.utils import time_execution
 
