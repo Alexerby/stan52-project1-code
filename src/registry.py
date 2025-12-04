@@ -1,11 +1,11 @@
 from sklearn.svm import SVC, LinearSVC
 
-C = [0.1, 1, 5]
+C = [0.5, 1, 5]
 
 MODEL_REGISTRY = {
     "svm_linear": {
         "scaler": True,
-        "model": LinearSVC(dual=False),
+        "model": SVC(kernel="linear"),
         "param_grid": {
             "model__C": C,
         }
