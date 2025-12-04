@@ -53,6 +53,7 @@ python -m src.train --model svm_rbf --tune
 | `--list-models` | **Info:** Lists all available model names in the registry and exits. |
 | `--tune` | **Optimization:** Executes **Grid Search Cross-Validation** to find optimal hyperparameters (e.g., $C$ and $\gamma$) before final training. |
 | `--test` | **Debug Mode:** Trains on a subset of **1,000 observations** only. Use this to verify the pipeline works without waiting for full training. |
+| `--full` | Train the model on the entire MNIST dataset |
 
 ###  Evaluation (`src.evaluate`)
 

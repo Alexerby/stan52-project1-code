@@ -85,9 +85,9 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Train a MNIST model.")
 
     parser.add_argument(
-            "--model",
-            type=str,
-            help="Name of model to train (see --list-models)."
+        "--model", 
+        type=str, 
+        help="Name of model to train (see --list-models)."
     )
 
     parser.add_argument(
@@ -105,7 +105,13 @@ def parse_args():
     parser.add_argument(
         "--test",
         action="store_true",
-        help="To test model on a subset of 1 000 observations."
+        help="To test model on a subset of 1,000 observations."
+    )
+    
+    parser.add_argument(
+        "--full",
+        action="store_true",
+        help="Forces loading the entire 60,000 training dataset."
     )
 
     return parser.parse_args()
@@ -128,9 +134,14 @@ def main():
             f"Unknown model '{args.model}'. "
             f"Run with --list-models to see available options."
         )
-
+    
+    data_limit = 10_000
+    
+    if args.full:
+        data_limit = None
+    
     print(f"Loading MNIST from {DATA_DIR}...")
-    X_train, y_train, X_test, y_test = load_mnist(DATA_DIR, 10_000)
+    X_train, y_train, X_test, y_test = load_mnist(DATA_DIR, data_limit)
     
     if args.test:
         test_no = 1_000
@@ -144,7 +155,6 @@ def main():
     print("Training set:", X_train.shape)
     print("Test set:", X_test.shape)
 
-    # Train
     spec = MODEL_REGISTRY[args.model]
     train_and_evaluate(
         args.model, 
@@ -152,6 +162,9 @@ def main():
         X_train, y_train, X_test, y_test, 
         tune=args.tune
     )
+
+if __name__ == "__main__":
+    main()
 
 if __name__ == "__main__":
     main()
