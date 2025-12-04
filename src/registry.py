@@ -24,7 +24,6 @@ MODEL_REGISTRY = {
         "param_grid": {
             "model__C": C,
             "model__degree": [3, 4, 5],
-            "model__gamma": 1
         }
     },
 }
