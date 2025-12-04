@@ -8,29 +8,29 @@ Usage:
 import argparse
 import joblib
 import sys
+from pathlib import Path
 from sklearn.metrics import accuracy_score, confusion_matrix
 
-# Internal imports
-from .utils.paths import DATA_DIR, MODEL_DIR
+from .utils.paths import DATA_DIR
 from .utils.data_loading import load_mnist
 from .metrics import summarize_confusions
 
-def _load_saved_model(model_name: str):
-    """
-    Load a trained model from the models/ directory.
-    """
-    model_path = MODEL_DIR / f"{model_name}.joblib"
+
+def _load_saved_model(model_name: str, model_dir: Path):
+    model_path = model_dir / f"{model_name}.joblib"
     
     if not model_path.exists():
         print(f"Error: Model file not found at {model_path}")
-        print(f"Have you trained it yet? Run: python -m src.train --model {model_name}")
+        print(f"Have you trained it yet? Run: python3 -m src.training.train_mnist --model {model_name}")
         sys.exit(1)
         
     print(f"Loading model: {model_path}")
     return joblib.load(model_path)
 
-def evaluate_model(model_name: str):
-    pipeline = _load_saved_model(model_name)
+
+def evaluate_model(model_name: str, model_base_dir: Path):
+    
+    pipeline = _load_saved_model(model_name, model_base_dir)
 
     print(f"Loading MNIST data from {DATA_DIR}...")
     _, _, X_test, y_test = load_mnist(DATA_DIR)
@@ -45,6 +45,8 @@ def evaluate_model(model_name: str):
     print(f"Model: {model_name}")
     print(f"Test Set Accuracy: {acc:.4f}")
     print("-" * 40)
+    # print(summarize_confusions(cm)) 
+
     
 def main():
     parser = argparse.ArgumentParser(description="Evaluate a saved MNIST model.")
@@ -55,8 +57,23 @@ def main():
         help="Name of the saved model (e.g., linear_svm, xgboost)"
     )
     
+    parser.add_argument(
+        "--dir",
+        type=str,
+        required=False,
+        help="Specify a custom directory where the model files are located."
+    )
+    
     args = parser.parse_args()
-    evaluate_model(args.model)
+    
+    default_model_dir = Path(__file__).resolve().parent.parent / "models"
+    
+    if args.dir:
+        model_base_dir = Path(args.dir)
+    else:
+        model_base_dir = default_model_dir
+        
+    evaluate_model(args.model, model_base_dir)
 
 if __name__ == "__main__":
     main()
