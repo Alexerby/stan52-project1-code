@@ -29,6 +29,8 @@ def _load_saved_model(model_name: str, model_dir: Path):
 
 
 def evaluate_model(model_name: str, model_base_dir: Path):
+    print("-" * 40)
+    print(f"Model: {model_name}")
     
     pipeline = _load_saved_model(model_name, model_base_dir)
 
@@ -41,11 +43,12 @@ def evaluate_model(model_name: str, model_base_dir: Path):
     acc = accuracy_score(y_test, y_pred)
     cm = confusion_matrix(y_test, y_pred)
 
-    print("-" * 40)
-    print(f"Model: {model_name}")
+    print(f"Confusion Matrix:")
+    print(cm)
+
     print(f"Test Set Accuracy: {acc:.4f}")
     print("-" * 40)
-    # print(summarize_confusions(cm)) 
+    print(summarize_confusions(cm)) 
 
     
 def main():
