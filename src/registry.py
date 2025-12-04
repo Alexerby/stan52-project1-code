@@ -10,7 +10,6 @@ MODEL_REGISTRY = {
         "scaler": True,
         "model": SVC(kernel="rbf"),
         "param_grid": {
-            "model__C": [0, 1, 5],
             "model__gamma": [0.01, 0.05]
         }
     },
