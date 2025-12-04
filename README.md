@@ -89,3 +89,11 @@ python -m src.test_custom_images svm_rbf
 
 ```
 ```
+
+
+###  Visualizations (`src.visualizations`)
+**Basic Usage:**
+
+```bash
+python -m src.visualizations
+```
