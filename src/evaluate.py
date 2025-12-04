@@ -15,7 +15,7 @@ from .utils.paths import DATA_DIR, MODEL_DIR
 from .utils.data_loading import load_mnist
 from .metrics import summarize_confusions
 
-def load_saved_model(model_name: str):
+def _load_saved_model(model_name: str):
     """
     Load a trained model from the models/ directory.
     """
@@ -30,7 +30,7 @@ def load_saved_model(model_name: str):
     return joblib.load(model_path)
 
 def evaluate_model(model_name: str):
-    pipeline = load_saved_model(model_name)
+    pipeline = _load_saved_model(model_name)
 
     print(f"Loading MNIST data from {DATA_DIR}...")
     _, _, X_test, y_test = load_mnist(DATA_DIR)
