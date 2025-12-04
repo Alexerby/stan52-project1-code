@@ -19,6 +19,11 @@ Install required dependencies:
 pip install -r requirements.txt
 ````
 
+
+**Requirements:** 
+- Python >= 3.11
+
+
 -----
 
 ## 🚀 Usage Workflow
@@ -31,13 +36,13 @@ Training is handled by `src.train`. The available model list is defined in `src/
 
 ```bash
 # List all available models
-python3 -m src.train --list-models
+python -m src.train --list-models
 
 # Train a specific model (e.g., SVM)
-python3 -m src.train --model svm_rbf
+python -m src.train --model svm_rbf
 
 # Train with Hyperparameter Tuning (Grid Search)
-python3 -m src.train --model svm_rbf --tune
+python -m src.train --model svm_rbf --tune
 ```
 
 **Configuration Flags:**
@@ -54,8 +59,13 @@ python3 -m src.train --model svm_rbf --tune
 Evaluate a previously trained model against the official MNIST test set to generate a confusion matrix and accuracy score:
 
 ```bash
-python3 -m src.evaluate --model svm_rbf
+python -m src.evaluate --model svm_rbf
 ```
+| Flag | Description |
+| :--- | :--- |
+| `--dir` | **Debug Mode:** Specify path to another dir where the model exists. |
+
+
 
 ###  Inference (`src.test_custom_images`)
 
@@ -67,7 +77,7 @@ To see how a model performs on your own handwritten digits:
 **Basic Usage:**
 
 ```bash
-python3 -m src.test_custom_images svm_rbf
+python -m src.test_custom_images svm_rbf
 ```
 
 **Arguments:**
