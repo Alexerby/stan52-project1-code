@@ -130,7 +130,7 @@ def main():
         )
 
     print(f"Loading MNIST from {DATA_DIR}...")
-    X_train, y_train, X_test, y_test = load_mnist(DATA_DIR)
+    X_train, y_train, X_test, y_test = load_mnist(DATA_DIR, 10_000)
     
     if args.test:
         test_no = 1_000
