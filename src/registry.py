@@ -1,4 +1,4 @@
-from sklearn.svm import SVC, LinearSVC
+from sklearn.svm import SVC
 
 C = [0.5, 1, 5]
 
