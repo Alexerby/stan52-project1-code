@@ -5,10 +5,11 @@ The MNIST dataset is distributed as binary IDX files containing images and
 labels. These helpers read the files directly and return NumPy arrays suitable
 for use with scikit-learn models.
 
-API: 
+Public: 
     load_mnist(data_dir)
 """
 
+from typing import Optional
 import numpy as np
 from pathlib import Path
 
@@ -60,14 +61,29 @@ def _load_idx_labels(path: Path) -> np.ndarray:
     return np.frombuffer(data, dtype=np.uint8, offset=8)
 
 
-def load_mnist(data_dir: Path):
+def load_mnist(data_dir: Path, max_samples: Optional[int] = None):
     """
     Load MNIST from IDX files.
+
+    Parameters
+    ----------
+    data_dir: Path 
+        Filesystem path to the files
+
+    max_samples: Optional[int]
+        To limit the number of images to be trained on.
+
+
+
     """
     X_train = _load_idx_images(data_dir / "train-images.idx3-ubyte")
     y_train = _load_idx_labels(data_dir / "train-labels.idx1-ubyte")
     X_test  = _load_idx_images(data_dir / "t10k-images.idx3-ubyte")
     y_test  = _load_idx_labels(data_dir / "t10k-labels.idx1-ubyte")
+
+    if max_samples is not None and max_samples > 0:
+        X_train = X_train[:max_samples]
+        y_train = y_train[:max_samples]
 
     return X_train, y_train, X_test, y_test
 
