@@ -22,7 +22,7 @@ def make_pipeline(spec: dict) -> Pipeline:
         steps.append(("scaler", StandardScaler()))
     
     steps.append(("model", spec["model"])) 
-    return Pipeline(steps)
+    return Pipeline(steps, verbose=True)
 
 
 def run_hyperparameter_tuning(model_name: str, spec: dict, X_train, y_train):
