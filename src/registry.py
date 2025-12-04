@@ -1,7 +1,7 @@
 from sklearn.svm import SVC, LinearSVC
 
 MODEL_REGISTRY = {
-    "linear_svm": {
+    "svm_linear": {
         "scaler": True,
         "model": LinearSVC(dual=False),
         "param_grid": {}
@@ -12,6 +12,14 @@ MODEL_REGISTRY = {
         "param_grid": {
             "model__C": [0, 1, 5],
             "model__gamma": [0.01, 0.05]
+        }
+    },
+    "svm_poly": {
+        "scaler": True,
+        "model": SVC(kernel="poly",),
+        "param_grid": {
+            "model__degree": [3, 4, 5],
+            "model__gamma": [1, "scale"]
         }
     },
 }
