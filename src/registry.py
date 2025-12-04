@@ -3,7 +3,7 @@ from sklearn.svm import SVC, LinearSVC
 
 MODEL_REGISTRY = {
     "linear_svm": {
-        "scaler": False,
+        "scaler": True,
         "model": LinearSVC(dual=False),
         "param_grid": {}
     },
