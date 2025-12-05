@@ -1,30 +1,30 @@
 from sklearn.svm import SVC
 
-C = [0.01, 0.1]
+C = [0.1, 0.5, 1, 5]
 
 MODEL_REGISTRY = {
     "svm_linear": {
         "scaler": False,
-        "model": SVC(kernel="linear", C = 5),
+
         "param_grid": {
             "model__C": C,
         }
     },
     "svm_rbf": {
         "scaler": False,
-        "model": SVC(kernel="rbf", C = 5, gamma = "scale"),
+        "model": SVC(kernel="rbf"),
         "param_grid": {
             "model__C": C,
-            "model__gamma": [0.0001]
+            "model__gamma": [0.0001, 0.001, 0.01]
         }
     },
     "svm_poly": {
         "scaler": False,
-        "model": SVC(kernel="poly", C = 5, degree = 3),
+        "model": SVC(kernel="poly"),
         "param_grid": {
             "model__C": C,
             "model__degree": [3, 4, 5],
-            "model__gamma": [1]
+            "model__gamma": [1] # force to equal one
         }
     },
 }
