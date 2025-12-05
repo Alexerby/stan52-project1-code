@@ -98,3 +98,50 @@ python -m src.test_custom_images svm_rbf
 ```bash
 python -m src.visualizations
 ```
+
+
+### Robustness Testing and Visualization (`src.corruption`)
+
+This script is used to evaluate model robustness by applying **Additive White Gaussian Noise (AWGN)** to the test data and analyzing the resultant drop in accuracy. It supports two modes:
+
+#### Robustness Evaluation (`evaluate`)
+
+Runs a full robustness test for one or more models across a range of noise levels (0% to 100%) and generates a comparison plot, saving it as a PNG file.
+
+**Basic Usage:**
+
+```bash
+python -m src.corruption evaluate \
+    --model svm_linear svm_poly svm_rbf \
+    --dir models/saved/ \
+    --output_plot robustness_comparison_svms.png
+```
+
+| Flag | Type | Description |
+| :--- | :--- | :--- |
+| `--model <names>` | **Required** | List of model names (separated by spaces) to compare. |
+| `--dir <path>` | **Required** | Directory where the `.joblib` model files are located. |
+| `--output_plot <filename>`| **Optional** | Filename to save the resulting accuracy-vs-noise plot. |
+
+-----
+
+#### Prediction Comparison (`compare`)
+
+Inspects individual predictions for a single model at a specified noise level. It displays the original digit and the corrupted digit side-by-side using Matplotlib, along with the true label and the model's prediction.
+
+**Basic Usage (example 30% noise, numbers 1, 5, 9):**
+
+```bash
+python -m src.corruption compare \
+    --model svm_rbf \
+    --dir /abs/path/to/dir/ \
+    --numbers 1 5 9 \
+    --noise-level 0.3
+```
+
+| Flag | Type | Description |
+| :--- | :--- | :--- |
+| `--model <name>` | **Required** | The single model name to test. |
+| `--dir <path>` | **Required** | Directory where the `.joblib` model file is located. |
+| `--numbers <indices>`| **Required** | List of **sample indices** from the MNIST test set to display. |
+| `--noise-level <sigma>` | **Required** | The standard deviation ($\sigma$) of the Gaussian noise, as a float in the range $[0.0, 1.0]$. (e.g., $0.3$ for $30\%$ noise). |
