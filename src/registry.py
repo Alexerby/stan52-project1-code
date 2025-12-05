@@ -5,7 +5,7 @@ C = [0.1, 0.5, 1, 5]
 MODEL_REGISTRY = {
     "svm_linear": {
         "scaler": False,
-
+        "model": SVC(kernel="linear"),
         "param_grid": {
             "model__C": C,
         }
