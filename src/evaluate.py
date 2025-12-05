@@ -6,26 +6,13 @@ Usage:
 """
 
 import argparse
-import joblib
-import sys
 from pathlib import Path
 from sklearn.metrics import accuracy_score, confusion_matrix
 
 from .utils.paths import DATA_DIR
 from .utils.data_loading import load_mnist
 from .metrics import summarize_confusions
-
-
-def load_saved_model(model_name: str, model_dir: Path):
-    model_path = model_dir / f"{model_name}.joblib"
-    
-    if not model_path.exists():
-        print(f"Error: Model file not found at {model_path}")
-        print(f"Have you trained it yet? Run: python3 -m src.training.train_mnist --model {model_name}")
-        sys.exit(1)
-        
-    print(f"Loading model: {model_path}")
-    return joblib.load(model_path)
+from src.utils.utils import load_saved_model
 
 
 def evaluate_model(model_name: str, model_base_dir: Path):

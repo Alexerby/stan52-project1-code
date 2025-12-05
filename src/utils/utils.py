@@ -1,5 +1,8 @@
 import time
 import functools
+from pathlib import Path
+import joblib
+import sys
 
 def time_execution(func):
     """
@@ -23,3 +26,15 @@ def time_execution(func):
             
         return result
     return wrapper
+
+
+def load_saved_model(model_name: str, model_dir: Path):
+    model_path = model_dir / f"{model_name}.joblib"
+    
+    if not model_path.exists():
+        print(f"Error: Model file not found at {model_path}")
+        print(f"Have you trained it yet? Run: python3 -m src.training.train_mnist --model {model_name}")
+        sys.exit(1)
+        
+    print(f"Loading model: {model_path}")
+    return joblib.load(model_path)
