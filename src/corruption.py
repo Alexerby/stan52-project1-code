@@ -13,29 +13,60 @@ from src.utils.paths import DATA_DIR
 from src.utils.utils import load_saved_model
 
 def parse_args():
-    """Parse arguments to accept multiple models."""
-    parser = argparse.ArgumentParser(description="Evaluate robustness of specific SVM models.")
+    """Parse arguments to support two modes: 'evaluate' for plotting all results
+    and 'compare' for inspecting individual predictions."""
     
-    parser.add_argument(
+    parser = argparse.ArgumentParser(description="Evaluate or compare robustness of SVM models.")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+    
+    eval_parser = subparsers.add_parser('evaluate', help='Run full robustness evaluation and plot.')
+    
+    eval_parser.add_argument(
         "--model", 
         type=str, 
         nargs='+', 
         required=True, 
         help="List of model names to evaluate (e.g. svm_linear svm_poly svm_rbf)"
     )
-    
-    parser.add_argument(
+    eval_parser.add_argument(
         "--dir",
         type=Path,
         required=True,
         help="Directory where the .joblib model files are located."
     )
-    
-    parser.add_argument(
+    eval_parser.add_argument(
         "--output_plot",
         type=str,
         default="robustness_comparison.png",
         help="Filename to save the comparison plot."
+    )
+
+    comp_parser = subparsers.add_parser('compare', help='Inspect individual predictions for a single noise level.')
+    
+    comp_parser.add_argument(
+        "--model", 
+        type=str, 
+        required=True, 
+        help="Single model name to compare (e.g. svm_rbf)"
+    )
+    comp_parser.add_argument(
+        "--dir",
+        type=Path,
+        required=True,
+        help="Directory where the .joblib model files are located."
+    )
+    comp_parser.add_argument(
+        "--numbers", 
+        type=int, 
+        nargs='+', 
+        required=True, 
+        help="List of sample indices from the test set to display (e.g. 1 5 100)"
+    )
+    comp_parser.add_argument(
+        "--noise-level", 
+        type=float, 
+        required=True, 
+        help="Gaussian noise level (sigma) as a fraction of the data range [0, 1] (e.g. 0.3 for 30%% noise)"
     )
 
     return parser.parse_args()
@@ -78,11 +109,8 @@ def evaluate_single_model(model_name, model_path, X_test, y_test, noise_levels):
     results = []
     
     for p in noise_levels:
-        # CHANGED: Sigma is now direct because the range is 1.0.
-        # 10% noise = 0.1 * 1.0 = 0.1
         sigma = p 
         
-        # Apply noise (using .copy() to preserve original data)
         if sigma > 0:
             X_noisy = add_gaussian_noise(X_test.copy(), sigma)
         else:
@@ -148,31 +176,95 @@ def plot_comparison(all_results, output_filename):
     
     print(f"\nSaving comparison plot to {output_filename}...")
     plt.savefig(output_filename)
-    # plt.show() # Uncomment if you want the window to pop up
+
+
+def display_digit_with_noise(original_sample, noisy_sample, true_label, prediction, model_name, noise_pct):
+    """
+    Displays the original and noisy sample side-by-side using matplotlib.
+    """
+    fig, axes = plt.subplots(1, 2, figsize=(6, 3))
+    
+    # Original Image
+    axes[0].imshow(original_sample.reshape(28, 28), cmap='gray')
+    axes[0].set_title(f"Original: {true_label}", fontsize=10)
+    axes[0].axis('off')
+
+    # Noisy Image
+    axes[1].imshow(noisy_sample.reshape(28, 28), cmap='gray')
+    axes[1].set_title(f"Noisy ({noise_pct*100:.0f}%): {prediction}", fontsize=10)
+    axes[1].axis('off')
+
+    fig.suptitle(f"Model: {model_name} | True: {true_label} | Pred: {prediction}", fontsize=12)
+    plt.show()
+
+def print_prediction_comparison(model_name: str, model_path: Path, X_test: np.ndarray, y_test: np.ndarray, indices: list[int], noise_level: float):
+    """
+    Loads a model, applies noise, and displays a comparison for selected samples.
+    """
+    print(f"\n{'='*60}")
+    print(f"PREDICTION COMPARISON FOR MODEL: {model_name}")
+    print(f"Noise Level: {noise_level*100:.0f}% (sigma={noise_level:.2f})")
+    print(f"Selected Sample Indices: {indices}")
+    print(f"{'='*60}")
+
+    try:
+        model = load_saved_model(model_name, model_path)
+    except Exception as e:
+        print(f"Error loading {model_name}: {e}")
+        return
+
+    sigma = noise_level
+    
+    X_noisy = add_gaussian_noise(X_test.copy(), sigma) if sigma > 0 else X_test.copy()
+
+    for idx in indices:
+        if idx >= len(X_test):
+            print(f"Warning: Index {idx} out of range for test set size {len(X_test)}. Skipping.")
+            continue
+
+        original_sample = X_test[idx]
+        noisy_sample = X_noisy[idx]
+        true_label = y_test[idx]
+        
+        prediction = model.predict(noisy_sample.reshape(1, -1))[0]
+
+        is_correct = "CORRECT" if prediction == true_label else "INCORRECT"
+
+        print(f"\n--- Sample Index {idx} ---")
+        print(f"True Label: {true_label}")
+        print(f"Predicted Label: {prediction} ({is_correct})")
+        display_digit_with_noise(original_sample, noisy_sample, true_label, prediction, model_name, noise_level)
 
 def main():
     args = parse_args()
     X_test, y_test = load_test_data()
 
-    # Define noise levels (0% to 100%)
-    noise_percentages = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+    if args.command == 'evaluate':
+        noise_percentages = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+        all_model_results = {}
 
-    all_model_results = {}
+        for model_name in args.model:
+            model_results = evaluate_single_model(
+                model_name, 
+                args.dir, 
+                X_test, 
+                y_test, 
+                noise_percentages
+            )
+            if model_results:
+                all_model_results[model_name] = model_results
 
-    # Iterate over the models provided in the command line argument
-    for model_name in args.model:
-        model_results = evaluate_single_model(
-            model_name, 
-            args.dir, 
-            X_test, 
-            y_test, 
-            noise_percentages
+        plot_comparison(all_model_results, args.output_plot)
+        
+    elif args.command == 'compare':
+        print_prediction_comparison(
+            model_name=args.model,
+            model_path=args.dir,
+            X_test=X_test,
+            y_test=y_test,
+            indices=args.numbers,
+            noise_level=args.noise_level
         )
-        if model_results:
-            all_model_results[model_name] = model_results
-
-    # Plot Results
-    plot_comparison(all_model_results, args.output_plot)
 
 if __name__ == "__main__":
     main()
