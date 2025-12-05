@@ -14,6 +14,8 @@ from PIL import Image
 import joblib
 
 
+# TODO: Already have a similar load_model function in src/utils/eval.py
+# Remove this one.
 def load_model(model_name: str):
     """
     Load a trained model by name from the `models/` directory.
