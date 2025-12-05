@@ -16,7 +16,6 @@ def parse_args():
     """Parse arguments to accept multiple models."""
     parser = argparse.ArgumentParser(description="Evaluate robustness of specific SVM models.")
     
-    # CHANGED: nargs='+' allows multiple arguments like: --model svm_linear svm_poly
     parser.add_argument(
         "--model", 
         type=str, 
@@ -42,14 +41,25 @@ def parse_args():
     return parser.parse_args()
 
 def load_test_data():
+    """
+    Loads MNIST test data.
+    NOTE: Assumes the data loading pipeline now returns data scaled to [0, 1].
+    """
     print("Loading MNIST test data...")
     _, _, X_test, y_test = load_mnist(DATA_DIR) 
     return X_test, y_test
 
 def add_gaussian_noise(X: np.ndarray, sigma: float) -> np.ndarray:
-    """Applies Additive White Gaussian Noise (AWGN) to [0, 255] data."""
+    """
+    Applies Additive White Gaussian Noise (AWGN) to [0, 1] data.
+    
+    Args:
+        X: Input data (N, D) in range [0, 1]
+        sigma: Standard deviation of the noise distribution
+    """
     noise = np.random.normal(loc=0.0, scale=sigma, size=X.shape)
-    return np.clip(X + noise, 0., 255.)
+    # CHANGED: Clip to 1.0 because data is now normalized to [0, 1]
+    return np.clip(X + noise, 0., 1.)
 
 def evaluate_single_model(model_name, model_path, X_test, y_test, noise_levels):
     """
@@ -68,7 +78,9 @@ def evaluate_single_model(model_name, model_path, X_test, y_test, noise_levels):
     results = []
     
     for p in noise_levels:
-        sigma = p * 255.0
+        # CHANGED: Sigma is now direct because the range is 1.0.
+        # 10% noise = 0.1 * 1.0 = 0.1
+        sigma = p 
         
         # Apply noise (using .copy() to preserve original data)
         if sigma > 0:
@@ -85,12 +97,13 @@ def evaluate_single_model(model_name, model_path, X_test, y_test, noise_levels):
             "Accuracy": acc
         })
         
-        print(f"  -> Noise: {int(p*100)}% (sigma={sigma:.1f}) | Accuracy: {acc:.4f}")
+        print(f"  -> Noise: {int(p*100)}% (sigma={sigma:.2f}) | Accuracy: {acc:.4f}")
 
     # Print ASCII Table for this model
     df = pd.DataFrame(results)
     df_display = df.copy()
-    df_display['Sigma'] = df_display['Sigma'].map('{:.1f}'.format)
+    # Format sigma to 2 decimal places since they are small floats now (0.10, 0.20...)
+    df_display['Sigma'] = df_display['Sigma'].map('{:.2f}'.format)
     df_display['Accuracy'] = df_display['Accuracy'].map('{:.4f}'.format)
     
     print(f"\nSummary Table for {model_name}:")
@@ -122,7 +135,7 @@ def plot_comparison(all_results, output_filename):
         
         plt.plot(x_vals, y_vals, 
                  marker=markers.get(model_name, 'o'), 
-                 color=colors.get(model_name, None), # None lets matplotlib pick a color if unknown
+                 color=colors.get(model_name, None), 
                  linewidth=2, 
                  label=model_name)
 
@@ -141,8 +154,8 @@ def main():
     args = parse_args()
     X_test, y_test = load_test_data()
 
-    # Define noise levels (0% to 90%)
-    noise_percentages = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+    # Define noise levels (0% to 100%)
+    noise_percentages = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 
     all_model_results = {}
 

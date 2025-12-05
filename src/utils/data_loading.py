@@ -63,7 +63,7 @@ def _load_idx_labels(path: Path) -> np.ndarray:
 
 def load_mnist(data_dir: Path, max_samples: Optional[int] = None):
     """
-    Load MNIST from IDX files.
+    Load MNIST from IDX files and scale pixel values to [0, 1].
 
     Parameters
     ----------
@@ -72,18 +72,20 @@ def load_mnist(data_dir: Path, max_samples: Optional[int] = None):
 
     max_samples: Optional[int]
         To limit the number of images to be trained on.
-
-
-
     """
-    X_train = _load_idx_images(data_dir / "train-images.idx3-ubyte")
+    # Load the raw data (Integers 0-255)
+    X_train_raw = _load_idx_images(data_dir / "train-images.idx3-ubyte")
     y_train = _load_idx_labels(data_dir / "train-labels.idx1-ubyte")
-    X_test  = _load_idx_images(data_dir / "t10k-images.idx3-ubyte")
+    X_test_raw  = _load_idx_images(data_dir / "t10k-images.idx3-ubyte")
     y_test  = _load_idx_labels(data_dir / "t10k-labels.idx1-ubyte")
+
+    # Scale to [0, 1]
+    # We cast to float32 to ensure decimal precision, then divide by 255
+    X_train = X_train_raw.astype(np.float32) / 255.0
+    X_test = X_test_raw.astype(np.float32) / 255.0
 
     if max_samples is not None and max_samples > 0:
         X_train = X_train[:max_samples]
         y_train = y_train[:max_samples]
 
     return X_train, y_train, X_test, y_test
-
