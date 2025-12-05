@@ -16,7 +16,7 @@ from .utils.data_loading import load_mnist
 from .metrics import summarize_confusions
 
 
-def _load_saved_model(model_name: str, model_dir: Path):
+def load_saved_model(model_name: str, model_dir: Path):
     model_path = model_dir / f"{model_name}.joblib"
     
     if not model_path.exists():
@@ -32,7 +32,7 @@ def evaluate_model(model_name: str, model_base_dir: Path):
     print("-" * 40)
     print(f"Model: {model_name}")
     
-    pipeline = _load_saved_model(model_name, model_base_dir)
+    pipeline = load_saved_model(model_name, model_base_dir)
 
     print(f"Loading MNIST data from {DATA_DIR}...")
     _, _, X_test, y_test = load_mnist(DATA_DIR)
